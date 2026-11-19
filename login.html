@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login — S JDM</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-box">
+    <a href="index.html" class="logo"><em class="gs">S</em><b><span>JDM</span></b><small>SHOWROOM</small></a>
+    <h2>LOGIN</h2>
+    <form id="f">
+      <div class="field"><label>Email</label><input type="email" name="email" required autofocus></div>
+      <div class="field"><label>Password</label><input type="password" name="password" required></div>
+      <div class="msg err" id="msg"></div>
+      <button class="btn">Masuk</button>
+    </form>
+    <p class="alt">Belum punya akun? <a href="register.html">Daftar</a> · <a href="index.html">Kembali</a></p>
+  </div>
+<script src="js/common.js"></script>
+<script>
+document.getElementById('f').onsubmit = async (e) => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(e.target));
+  try {
+    const r = await api('/api/login', { method: 'POST', body: { ...d, as: 'user' } });
+    location.href = 'index.html';
+  } catch (err) { document.getElementById('msg').textContent = err.message; }
+};
+</script>
+</body>
+</html>

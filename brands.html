@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brands — S JDM Showroom</title>
+<link rel="stylesheet" href="css/style.css?v=4">
+</head>
+<body>
+
+<header class="top" id="siteHeader"></header>
+
+<section class="page-hero"><div class="wrap">
+  <div class="eyebrow">Our Brands</div>
+  <h1>JDM BRANDS</h1>
+  <p>Pilih merek favoritmu, lalu lihat semua mobil yang tersedia.</p>
+</div></section>
+
+<section class="page-sec"><div class="wrap">
+  <div class="brand-grid" id="brandGrid"><div class="empty">Memuat...</div></div>
+</div></section>
+
+<footer id="siteFooter"></footer>
+
+<script src="js/common.js?v=4"></script>
+<script>
+initPage("brands");
+(async () => {
+  const g = document.getElementById('brandGrid');
+  try {
+    const cars = await api('/api/cars');
+    const map = {};
+    cars.forEach((c) => { map[c.brand] = (map[c.brand] || 0) + 1; });
+    const names = Object.keys(map).sort();
+    g.innerHTML = names.map((b) => `
+      <a class="brand-card" href="index.html?brand=${encodeURIComponent(b)}#inventory">
+        <b>${esc(b)}</b><span>${map[b]} mobil</span><em>Lihat koleksi ›</em>
+      </a>`).join('') || '<div class="empty">Belum ada brand.</div>';
+  } catch (e) { g.innerHTML = '<div class="empty">Gagal memuat brand.</div>'; }
+})();
+</script>
+</body>
+</html>

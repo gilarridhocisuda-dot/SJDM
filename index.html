@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S JDM Showroom — Iconic JDM Legends</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="index.html" class="logo"><em class="gs">S</em><b><span>JDM</span></b><small>SHOWROOM</small></a>
+    <nav class="menu" id="menu">
+      <a href="#home" class="on">Home</a>
+      <a href="#inventory">Inventory</a>
+      <a href="#brands">Brands</a>
+      <a href="#why">Layanan</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="auth" id="auth"></div>
+    <button class="burger" onclick="document.getElementById('menu').classList.toggle('open')">☰</button>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div class="wrap">
+    <div>
+      <h1 class="brandmark"><span class="gold-s">S</span><span class="big">JDM</span><span class="sub">Legends</span></h1>
+      <p>Handpicked Japanese performance machines for true enthusiasts.</p>
+      <div class="stats">
+        <div><b id="st-cars">0+</b><span>JDM Cars</span></div>
+        <div><b id="st-brands">0+</b><span>Brands</span></div>
+        <div><b>100%</b><span>Authentic</span></div>
+      </div>
+      <a href="#inventory" class="btn">Explore Inventory ›</a>
+    </div>
+    <div class="hero-car" id="heroCar"></div>
+  </div>
+</section>
+
+<section class="inv" id="inventory">
+  <div class="wrap">
+    <div class="inv-head">
+      <div>
+        <div class="eyebrow">Our Collection</div>
+        <h2>JDM INVENTORY</h2>
+      </div>
+      <div class="filters">
+        <select id="fBrand"><option value="all">All Brands</option></select>
+        <select id="fSort">
+          <option value="">Sort By</option>
+          <option value="price_asc">Harga: Rendah → Tinggi</option>
+          <option value="price_desc">Harga: Tinggi → Rendah</option>
+          <option value="newest">Terbaru</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+
+    <div class="features" id="why">
+      <div><b>100% Authentic</b><span>Semua kendaraan terverifikasi keasliannya.</span></div>
+      <div><b>JDM Specialists</b><span>Ahli berpengalaman siap melayani Anda.</span></div>
+      <div><b>Nationwide Delivery</b><span>Pengiriman aman dan terasuransi.</span></div>
+      <div><b>Financing Options</b><span>Pembiayaan fleksibel untuk mobil impian.</span></div>
+    </div>
+
+    <div class="brands" id="brands">
+      <span>NISSAN</span><span>TOYOTA</span><span>HONDA</span><span>MAZDA</span><span>MITSUBISHI</span><span>SUBARU</span>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <div class="logo" style="margin-bottom:12px"><em class="gs">S</em><b><span>JDM</span></b><small>SHOWROOM</small></div>
+        <p style="color:var(--muted);font-size:14px">Destinasi terpercaya untuk mobil performa JDM ikonik.</p>
+      </div>
+      <div><h4>Quick Links</h4><ul><li>Inventory</li><li>Brands</li><li>Financing</li><li>About Us</li><li>Contact</li></ul></div>
+      <div><h4>Support</h4><ul><li>FAQ</li><li>Shipping &amp; Delivery</li><li>Returns</li><li>Terms &amp; Conditions</li><li>Privacy Policy</li></ul></div>
+      <div><h4>Contact Us</h4><ul><li>+62 812-0000-0000</li><li>info@sjdm.com</li><li>Sukabumi, Jawa Barat</li></ul></div>
+    </div>
+    <p class="c">© 2026 S JDM Showroom. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Modal detail + booking -->
+<div class="modal" id="modal">
+  <div class="box">
+    <div id="mBody"></div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

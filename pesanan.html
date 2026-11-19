@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pesanan Saya — S JDM Showroom</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .page-head { padding: 54px 0 34px; border-bottom: 1px solid var(--line); background: radial-gradient(ellipse at 80% 0, rgba(225,29,46,.12), transparent 55%), #0a0a0b; }
+  .page-head h1 { font-family: 'Orbitron'; font-size: 40px; letter-spacing: .08em; text-transform: uppercase; margin: 6px 0 8px; }
+  .page-head p { color: var(--muted); }
+  .orders { padding: 36px 0 70px; display: grid; gap: 16px; min-height: 360px; align-content: start; max-width: 950px; }
+  .order { background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-left: 3px solid var(--red); padding: 20px 30px; }
+  .order .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .order h3 { font-family: 'Orbitron'; font-size: 19px; letter-spacing: .06em; text-transform: uppercase; }
+  .order .hint { color: var(--muted); margin: 8px 0 14px; }
+  .order .rows { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 8px; }
+  .order .rows div { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); }
+  .order .rows b { color: var(--text); text-align: right; }
+  .order .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #555; vertical-align: -2px; margin-right: 6px; }
+  .order .actions { margin-top: 14px; display: flex; justify-content: flex-end; }
+  .orders .state { text-align: center; color: var(--muted); padding: 70px 0; }
+  .orders .state .btn { margin-top: 18px; }
+  @media (max-width: 760px) { .page-head h1 { font-size: 28px; } .order { padding: 16px 18px; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="index.html" class="logo"><em class="gs">S</em><b><span>JDM</span></b><small>SHOWROOM</small></a>
+    <nav class="menu" id="menu">
+      <a href="index.html#home">Home</a>
+      <a href="index.html#inventory">Inventory</a>
+      <a href="index.html#brands">Brands</a>
+      <a href="index.html#why">Layanan</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="auth" id="auth"></div>
+    <button class="burger" onclick="document.getElementById('menu').classList.toggle('open')">☰</button>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap">
+    <div class="eyebrow">My Bookings</div>
+    <h1>Pesanan Saya</h1>
+    <p>Pantau status booking kunjunganmu di sini.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="orders" id="orders"><div class="state">Memuat pesanan…</div></div>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <p class="c">© 2026 S JDM Showroom. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/common.js"></script>
+<script>
+const STATUS = {
+  pending:   ['Menunggu', 'Booking diterima. Tim kami akan segera menghubungi kamu.'],
+  confirmed: ['Dikonfirmasi', 'Booking dikonfirmasi. Sampai jumpa di showroom!'],
+  done:      ['Selesai', 'Kunjungan sudah selesai. Terima kasih!'],
+  cancelled: ['Dibatalkan', 'Booking ini dibatalkan. Hubungi kami jika ingin menjadwalkan ulang.'],
+};
+let me = null, lastSnap = null, lastStatus = {};
+
+function fmtDate(d) {
+  const t = new Date(String(d).slice(0, 10) + 'T00:00:00');
+  return isNaN(t) ? esc(d) : t.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function renderAuth() {
+  const el = document.getElementById('auth');
+  if (!me) { el.innerHTML = '<a class="btn ghost sm" href="login.html">Login</a><a class="btn sm" href="register.html">Daftar</a>'; return; }
+  el.innerHTML = `<span class="hi">Hai, ${esc(me.name.split(' ')[0])}</span>
+    <a class="btn ghost sm" href="pesanan.html">Pesanan Saya</a>
+    <button class="btn dark sm" onclick="logout()">Logout</button>`;
+}
+
+function card(b) {
+  const [label, hint] = STATUS[b.status] || [b.status, ''];
+  return `
+  <article class="order">
+    <div class="top">
+      <h3>${esc(b.car_name || 'Mobil tidak tersedia')}</h3>
+      <span class="badge ${esc(b.status)}">${esc(label)}</span>
+    </div>
+    <p class="hint">${esc(hint)}</p>
+    <div class="rows">
+      <div>No. Booking <b>#${b.id}</b></div>
+      <div>Tanggal Kunjungan <b>${fmtDate(b.visit_date)}</b></div>
+      ${b.color ? `<div>Warna <b><i class="swatch" style="background:${esc(b.color)}"></i>${esc(String(b.color).toUpperCase())}</b></div>` : ''}
+      ${b.note ? `<div>Catatan <b>${esc(b.note)}</b></div>` : ''}
+    </div>
+    ${b.status === 'pending' ? `<div class="actions"><button class="btn danger sm" onclick="cancelOrder(${b.id})">Batalkan</button></div>` : ''}
+  </article>`;
+}
+
+async function fetchRows() {
+  try { return await api('/api/my-bookings'); }
+  catch (e) { return await api('/api/bookings'); }   // cadangan
+}
+
+async function loadOrders(silent = false) {
+  const box = document.getElementById('orders');
+  try {
+    const r = await api('/api/me');
+    me = r.user; renderAuth();
+    if (!me) {
+      box.innerHTML = '<div class="state">Silakan login untuk melihat pesananmu.<br><a class="btn" href="login.html">Login</a></div>';
+      return;
+    }
+    const rows = await fetchRows();
+    const snap = JSON.stringify(rows);
+    if (snap === lastSnap) return;                       // tidak berubah -> tidak render ulang
+    if (lastSnap !== null) rows.forEach((b) => {
+      if (lastStatus[b.id] !== undefined && lastStatus[b.id] !== b.status)
+        toast(`Booking #${b.id} sekarang: ${(STATUS[b.status] || [b.status])[0]}`);
+    });
+    lastSnap = snap;
+    lastStatus = Object.fromEntries(rows.map((b) => [b.id, b.status]));
+    box.innerHTML = rows.length
+      ? rows.map(card).join('')
+      : '<div class="state">Kamu belum punya booking.<br><a class="btn" href="index.html#inventory">Lihat Inventory</a></div>';
+  } catch (err) {
+    if (silent) return;                                  // gagal saat auto-refresh: biarkan tampilan lama
+    box.innerHTML = `<div class="state">${esc(err.message)}<br><a class="btn" href="login.html">Login</a></div>`;
+  }
+}
+
+async function cancelOrder(id) {
+  if (!confirm('Batalkan booking ini?')) return;
+  try { await api('/api/my-bookings/' + id, { method: 'PATCH' }); toast('Booking dibatalkan.'); lastSnap = null; loadOrders(); }
+  catch (err) { toast(err.message); }
+}
+
+loadOrders();
+// Auto-refresh tiap 5 detik (saat tab terlihat) + langsung saat tab dibuka lagi
+setInterval(() => { if (!document.hidden) loadOrders(true); }, 5000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadOrders(true); });
+window.addEventListener('focus', () => loadOrders(true));
+</script>
+</body>
+</html>
